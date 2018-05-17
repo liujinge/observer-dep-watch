@@ -18,7 +18,11 @@ function defineReactive (data, key, val) {
     // 递归观测子属性
     observer(val)
     
+    // data中的每个字段都有一个 Dep实例
+    // 在 get 中收集仅针对该属性的依赖
+    // 在 set 中触发所有收集到的依赖
     let dep = new Dep()
+    
     Object.defineProperty(data, key, {
         enumerable: true,
         configurable: true,
@@ -46,6 +50,8 @@ function observer (data) {
     new Observer(data)
 }
 
+
+// Dep
 class Dep {
     constructor () {
         this.subs = []
@@ -60,13 +66,15 @@ class Dep {
     }
 }
 
+// 将当前 Watch实例 设置为全局属性
 Dep.target = null
 
 function pushTarget(watch){
     Dep.target = watch
 }
 
-// watch
+
+// Watch
 class Watch {
     constructor (exp, fn) {
         this.exp = exp
@@ -86,10 +94,19 @@ var data = {
 
 observer(data)
 
+// a 收集到的第一个依赖（Watch 对象）
 new Watch('a', () => {
     console.log(9)
 })
 
+// a 收集到的第二个依赖（Watch 对象）
+new Watch('a', () => {
+    console.log(99)
+})
+
+// 当 a 属性值变化的时候，就会通过 dep.notify 循环调用所有收集到的Watch对象中的回调函数
+
+// b.c 收集到的第一个依赖（Watch 对象）
 new Watch('b.c', () => {
     console.log(80)
 })
