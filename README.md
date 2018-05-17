@@ -1,2 +1,3 @@
-# observer-dep-watch
-数据劫持、观察数据、通知变化的极其简单实现
+# 注意
+不可以在浏览器中运行，不过可是使用 node 运行
+`node observer-dep-watch.js`
